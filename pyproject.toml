@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "any-translate"
+version = "0.1.0"
+description = "OpenAI API를 사용한 자막 및 텍스트 번역 도구"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Any-Translate Team" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "openai>=1.65.2",
+    "rich>=13.9.4",
+    "tiktoken>=0.9.0",
+    "typer>=0.15.2",
+]
+
+[dependency-groups]
+dev = ["mypy>=1.15.0", "pytest>=8.3.4", "ruff>=0.9.9"]
+
+[project.scripts]
+any-translate = "any_translate.cli.commands:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["any_translate"]
+
+[tool.ruff]
+line-length = 119
+target-version = "py312"
+lint.select = [
+    "PLE",
+    "PLW",
+    "E",
+    "W",
+    "F",
+    "FA",
+    "I",
+    "ISC",
+    "Q",
+    "UP",
+    "C4",
+    "PT",
+]
+preview = true
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "double"
+docstring-quotes = "double"
+multiline-quotes = "double"
+
+[tool.ruff.lint.flake8-pytest-style]
+mark-parentheses = true
+fixture-parentheses = true
+
+[tool.pytest.ini_options]
+python_files = ["tests.py", "test_*.py", "*_tests.py", "*_test.py"]
+addopts = """\
+    -n auto \
+"""
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
