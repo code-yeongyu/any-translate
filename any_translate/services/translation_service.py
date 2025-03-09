@@ -3,11 +3,11 @@ import textwrap
 from typing import Any, cast
 
 import tiktoken
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, RateLimitError
 from openai.types.chat import ChatCompletionMessageParam
 from pydantic import ValidationError
 from rich import print
-from tenacity import retry, retry_if_exception_type, stop_after_attempt
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
 
 from any_translate.models.translation import TranslationResult, TranslationSchema
 
@@ -112,6 +112,12 @@ class TranslationService:
             ValueError,
             TimeoutError,
         )),
+        reraise=True,
+    )
+    @retry(
+        stop=stop_after_attempt(300),
+        retry=retry_if_exception_type((RateLimitError,)),
+        wait=wait_fixed(1),
         reraise=True,
     )
     async def translate_sentence(self, sentence: str) -> TranslationResult:
